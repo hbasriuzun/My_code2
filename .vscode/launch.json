@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": ".",
-      "program": "build/Debug/outDebug",
+      "cwd": "c:/Users/hbasr/OneDrive - Yildiz Technical University/Yeni klasör/My_code2/compatitive_programming/questions",
+      "program": "c:/Users/hbasr/OneDrive - Yildiz Technical University/Yeni klasör/My_code2/compatitive_programming/questions/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
