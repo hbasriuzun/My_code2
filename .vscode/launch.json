@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+    
     {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
@@ -8,8 +9,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/hbasr/OneDrive - Yildiz Technical University/Yeni klasör/My_code2/compatitive_programming/questions",
-      "program": "c:/Users/hbasr/OneDrive - Yildiz Technical University/Yeni klasör/My_code2/compatitive_programming/questions/build/Debug/outDebug",
+      "cwd": "c:/Users/hbasr/OneDrive - Yildiz Technical University/GitHub/My_code2/compatitive_programming/questions",
+      "program": "c:/Users/hbasr/OneDrive - Yildiz Technical University/GitHub/My_code2/compatitive_programming/questions/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
