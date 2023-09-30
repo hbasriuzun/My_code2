@@ -3,9 +3,8 @@ using namespace std;
 
 #define ll long long
 #define pb push_back 
-#define  PHI = (1 + sqrt(5)) / 2
-
 // 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610
+// 1 2 3 4 5  6  7  8  9  10 11  12  13  14
 ll fib(ll n) {
     if(n == 0) return 0;
     if(n == 1) return 1;
@@ -63,7 +62,8 @@ ll fib_matrix(ll n) {
 }
 
 ll fib4(ll n) {
-    return round(pow(PHI, n) / sqrt(5));
+    double phi = (1 + sqrt(5)) / 2;
+    return round(pow(phi, n) / sqrt(5));
 }
 
 ll fib5_memorization(ll n, ll *memo) {
@@ -80,7 +80,7 @@ int main()  {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    cout << fib4(8) << endl;
+    cout << fib_matrix(999999999999999999) << endl;
 
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -91,5 +91,6 @@ int main()  {
     std::cout << "Gecen sure: " << seconds << " saniye" << std::endl;
     int a;
     cin >> a;
+    a = 5+5;
     return 0;
 }
