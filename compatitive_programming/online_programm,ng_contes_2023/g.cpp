@@ -13,7 +13,7 @@ int main() {
     //I will take graph
     int a,b;
     std::cin >> a >> b;
-    std::vector<std::vector<int>> v(a);
+    std::vector<std::vector<int> > v(a);
     for(int i=0; i<b; i++){
         int x,y;
         std::cin >> x >> y;

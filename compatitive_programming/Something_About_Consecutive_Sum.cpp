@@ -1,5 +1,6 @@
-#include <bits/stdc++.h>
-
+#include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 int main() {
@@ -12,6 +13,6 @@ int main() {
         sum = (i*(i+1))/2;
         i++;
     }
-    cout<<sum-n;
+    cout<<sum-n<<endl;
 	return 0;
 }
