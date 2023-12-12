@@ -59,6 +59,7 @@
   "files.associations": {
     "cmath": "cpp",
     "complex": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "set": "cpp"
   }
 }

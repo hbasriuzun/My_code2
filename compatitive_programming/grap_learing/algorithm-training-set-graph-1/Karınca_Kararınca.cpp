@@ -32,13 +32,34 @@ using namespace std;
 #define MOD 1000000007
 #define INF 1000000000
 #define MAXN 1000001
-const int N = 1e5+5;
+const int N = 2e5+5;
 
+vector <int> adj[N];
+stack <int> frontier;
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
 
+    int a,b,ans=0,t;
+    cin >> a;
+    int x;
+    for(int i=0; i<a-1; i++){
+        cin >> x;
+        adj[x].pb(i+2);
+    }
+     
+    cin >> b;
+    frontier.push(b);
+    while(!frontier.empty()){
+        t = frontier.top();
+        frontier.pop();
+        for(auto i : adj[t]){
+            frontier.push(i);
+        }
+        ans++;
+    }
+    cout << ans;
 
     return 0;
 }
