@@ -59,13 +59,13 @@ void dfs(const unordered_map<int, vector<int> >& graph, int start) {
 int main() {
     // Örnek bir sayı grafiği
     unordered_map<int, vector<int> > graph = {
-        {1, {7, 2, 3}},
+        {1, {2, 3}},
         {2, {1, 4, 5}},
         {3, {1, 6}},
         {4, {2, 7}},
         {5, {2, 8}},
         {6, {3}},
-        {7, {4,1}},
+        {7, {4}},
         {8, {5}}
     };
 
