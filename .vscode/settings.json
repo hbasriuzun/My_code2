@@ -60,6 +60,7 @@
     "cmath": "cpp",
     "complex": "cpp",
     "string": "cpp",
-    "set": "cpp"
+    "set": "cpp",
+    "map": "cpp"
   }
 }

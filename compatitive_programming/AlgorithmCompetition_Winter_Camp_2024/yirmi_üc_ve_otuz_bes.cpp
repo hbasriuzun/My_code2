@@ -37,12 +37,11 @@ const int N = 1e5+5;
 void solution(vector< vector<int> > arr,int n,int m){
     vector< vector<int> > arr2;
     arr2=arr;
-    for(int i=1; i<m; i++){
-        for(int j=1; j<n; j++){
+    for(int i=1; i<n+1; i++){
+        for(int j=1; j<m+1; j++){
             if(arr[i][j] == 23 && (arr[i-1][j-1] != 23 && arr[i-1][j] != 23 && arr[i-1][j+1] != 23 && arr[i][j-1] != 23 && arr[i][j+1] != 23 && arr[i+1][j-1] != 23 && arr[i+1][j] != 23 && arr[i+1][j+1] != 23)){
                 arr2[i][j] = 35;
-            }
-            if(arr[i][j] == 35 && (arr[i-1][j-1] != 35 && arr[i-1][j] != 35 && arr[i-1][j+1] != 35 && arr[i][j-1] != 35 && arr[i][j+1] != 35 && arr[i+1][j-1] != 35 && arr[i+1][j] != 35 && arr[i+1][j+1] != 35)){
+            }else if(arr[i][j] == 35 && (arr[i-1][j-1] != 35 && arr[i-1][j] != 35 && arr[i-1][j+1] != 35 && arr[i][j-1] != 35 && arr[i][j+1] != 35 && arr[i+1][j-1] != 35 && arr[i+1][j] != 35 && arr[i+1][j+1] != 35)){
                 arr2[i][j] = 23;
             }
         }
