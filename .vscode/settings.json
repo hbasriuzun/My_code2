@@ -61,6 +61,12 @@
     "complex": "cpp",
     "string": "cpp",
     "set": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "iostream": "cpp",
+    "ios": "cpp",
+    "ostream": "cpp",
+    "bitset": "cpp",
+    "iomanip": "cpp",
+    "vector": "cpp"
   }
 }
