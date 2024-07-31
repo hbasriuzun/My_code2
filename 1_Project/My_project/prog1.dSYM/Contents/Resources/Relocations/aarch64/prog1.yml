@@ -1,0 +1,9 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/hbasriuzun/Documents/GitHub/My_code2/1_Project/My_project/prog1'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: __Z12Numeric2CharPci, symObjAddr: 0x0, symBinAddr: 0x100003C08, symSize: 0x80 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: __Z12Numeric2CharPci, symObjAddr: 0x0, symBinAddr: 0x100003C08, symSize: 0x80 }
+  - { offsetInCU: 0x93, offset: 0x93, size: 0x8, addend: 0x0, symName: __Z12Char2NumericPc, symObjAddr: 0x80, symBinAddr: 0x100003C88, symSize: 0x6C }
+  - { offsetInCU: 0xE9, offset: 0xE9, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0xEC, symBinAddr: 0x100003CF4, symSize: 0x170 }
+...
