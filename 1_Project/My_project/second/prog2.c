@@ -14,7 +14,6 @@ int Show_Menu() {
 
 int Insert(int A[], int ID) {
     int index = ID % 100;
-
     for (int i = 0; i < 100; i++) {
         if (A[index] == -1) {
             A[index] = ID;
@@ -22,14 +21,12 @@ int Insert(int A[], int ID) {
         }
         index = (index + 1) % 100;
     }
-
     printf("The array is full.\n");
     return -2;
 }
 
 int Find(int A[], int ID) {
     int index = ID % 100;
-
     for (int i = 0; i < 100; i++) {
         if (A[index] == ID) {
             return index;
@@ -39,7 +36,6 @@ int Find(int A[], int ID) {
         }
         index = (index + 1) % 100;
     }
-
     return -2;
 }
 
@@ -57,7 +53,6 @@ int main() {
     for (int i = 0; i < 100; i++) {
         A[i] = -1;
     }
-
     while (1) {
         choice = Show_Menu();
 

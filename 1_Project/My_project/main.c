@@ -109,94 +109,73 @@ int main(int argc, char *argv[]) {
 }
 
 void saveMovies(Budget *budget, Name *name, FILE *fp) {
-    char *line = NULL, *tmp2, *tmp3;
-    tmp2 = (char*)malloc(sizeof(char) * 100);
-    tmp3 = (char*)malloc(sizeof(char) * 100);
-    double tmp;
-    int i = 0, j = 0, k = 0, index = 0;
+    char *line = (char*)malloc(sizeof(char) * 1000);
+    char *tmp2 = (char*)malloc(sizeof(char) * 100);
+    char *tmp3 = (char*)malloc(sizeof(char) * 100);
+    int index = 0;
 
-    line = (char*)malloc(sizeof(char) * 1000);
-    while (fgets(line, 1000, fp) != NULL) {
-        tmp = atof(strtok(line, ";"));
-        budget[index].budget = tmp;
+    while (fgets(line, 1000, fp) != NULL && index < NUMBER_OF_MOVIES) {
+        budget[index].budget = atoi(strtok(line, ";"));
 
-        budget[index].title = (char*)malloc(sizeof(char) * 100);
-        strcpy(budget[index].title, strtok(NULL, ";"));
+        budget[index].title = strdup(strtok(NULL, ";"));
+        name[index].title = strdup(budget[index].title);
 
-        name[index].title = (char*)malloc(sizeof(char) * 100);
-        strcpy(name[index].title, budget[index].title);
-
-        budget[index].titletype = (char*)malloc(sizeof(char) * 100);
-        strcpy(budget[index].titletype, strtok(NULL, ";"));
-
+        budget[index].titletype = strdup(strtok(NULL, ";"));
         strcpy(tmp2, strtok(NULL, ";"));
 
         name[index].rating = atof(strtok(NULL, ";"));
-
         name[index].runtime = atof(strtok(NULL, ";"));
-
         budget[index].year = atoi(strtok(NULL, ";"));
 
         strcpy(tmp3, strtok(NULL, ";"));
-
         name[index].votes = atof(strtok(NULL, ";"));
 
-        budget[index].top250 = (char*)malloc(sizeof(char) * 100);
-        strcpy(budget[index].top250, strtok(NULL, ";"));
+        budget[index].top250 = strdup(strtok(NULL, ";"));
+        name[index].mustsee = strdup(strtok(NULL, ";"));
+        name[index].url = strdup(strtok(NULL, "\0"));
 
-        name[index].mustsee = (char*)malloc(sizeof(char) * 100);
-        strcpy(name[index].mustsee, strtok(NULL, ";"));
-
-        name[index].url = (char*)malloc(sizeof(char) * 1000);
-        strcpy(name[index].url, strtok(NULL, "\0"));
-
-        name[index].genre = (char**)malloc(sizeof(char*) * 100);
-        i = 0; j = 0; k = 0;
+        // Genre ayrımı
+        name[index].genre = (char**)malloc(sizeof(char*) * 10);
+        int i = 0, j = 0, k = 0;
         while (tmp3[j] != '\0') {
             name[index].genre[i] = (char*)malloc(sizeof(char) * 100);
             k = 0;
-            while (tmp3[j] != ',') {
-                if (tmp3[j] == '\0') {
-                    k++;
-                    break;
-                }
-                name[index].genre[i][k] = tmp3[j];
-                j++;
-                k++;
+            while (tmp3[j] != ',' && tmp3[j] != '\0') {
+                name[index].genre[i][k++] = tmp3[j++];
             }
             name[index].genre[i][k] = '\0';
-
             if (tmp3[j] == '\0') {
-                name[index].genre[i + 1] = NULL;
+                name[index].genre[++i] = NULL;
                 break;
             }
             j++;
             i++;
         }
-        j = 0; i = 0; k = 0;
-        name[index].directors = (char**)malloc(sizeof(char*) * 100);
-        while (tmp2[j - 1] != '\0') {
+
+        // Directors ayrımı
+        name[index].directors = (char**)malloc(sizeof(char*) * 10);
+        i = 0; j = 0; k = 0;
+        while (tmp2[j] != '\0') {
             name[index].directors[i] = (char*)malloc(sizeof(char) * 100);
             k = 0;
-            while (tmp2[j] != ',') {
-                if (tmp2[j] == '\0') {
-                    break;
-                }
-                name[index].directors[i][k] = tmp2[j];
-                j++;
-                k++;
+            while (tmp2[j] != ',' && tmp2[j] != '\0') {
+                name[index].directors[i][k++] = tmp2[j++];
             }
             name[index].directors[i][k] = '\0';
-
             if (tmp2[j] == '\0') {
-                name[index].directors[i + 1] = NULL;
+                name[index].directors[++i] = NULL;
+                break;
             }
             j++;
             i++;
         }
         index++;
     }
+    free(line);
+    free(tmp2);
+    free(tmp3);
 }
+
 
 void initializeMemory(Budget *budget, Name *name) {
     budget->title = (char*)malloc(sizeof(char) * 100);
@@ -296,12 +275,12 @@ void sortMoviesByRating(Budget *budget, Name *name) {
 }
 
 void printAllInfoForSingleMovie(Budget *budget, Name *name) {
-    int i = 0, j = 0;
-    char *movie_name = (char*)malloc(sizeof(char) * 100);
+    char movie_name[100];
     printf("Enter the movie name: ");
     scanf(" %[^\n]", movie_name);
-    for (i = 0; i < NUMBER_OF_MOVIES; i++) {
-        if (strcmp(name[i].title, movie_name) == 0) {
+
+    for (int i = 0; i < NUMBER_OF_MOVIES; i++) {
+        if (name[i].title != NULL && strcmp(name[i].title, movie_name) == 0) {
             printf("Title: %s\n", name[i].title);
             printf("Must see number: %s\n", name[i].mustsee);
             printf("Rating: %lf\n", name[i].rating);
@@ -309,20 +288,26 @@ void printAllInfoForSingleMovie(Budget *budget, Name *name) {
             printf("Votes: %lf\n", name[i].votes);
             printf("Url: %s\n", name[i].url);
             printf("Genre: ");
-            for (j = 0; name[i].genre[j] != NULL; j++) {
-                printf("%s,", name[i].genre[j]);
+            for (int j = 0; name[i].genre[j] != NULL; j++) {
+                printf("%s", name[i].genre[j]);
+                if (name[i].genre[j + 1] != NULL) {
+                    printf(", ");
+                }
             }
-            printf("\n");
-            printf("Directors: ");
-            for (j = 0; name[i].directors[j] != NULL; j++) {
-                printf("%s,", name[i].directors[j]);
+            printf("\nDirectors: ");
+            for (int j = 0; name[i].directors[j] != NULL; j++) {
+                printf("%s", name[i].directors[j]);
+                if (name[i].directors[j + 1] != NULL) {
+                    printf(", ");
+                }
             }
             printf("\n\n");
-            break;
+            return; // Film bulundu ve bilgileri yazdırıldı, fonksiyondan çıkıyoruz
         }
     }
-    free(movie_name);
+    printf("Movie not found.\n");
 }
+
 
 void printGenreFrequency(Name *name) {
     int i = 0, j = 0, k = 0, index = 0;

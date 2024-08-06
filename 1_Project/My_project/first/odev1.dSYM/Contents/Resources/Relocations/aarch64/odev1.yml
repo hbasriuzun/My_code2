@@ -1,0 +1,12 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/hbasriuzun/Documents/GitHub/My_code2/1_Project/My_project/first/odev1'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: __Z12Numeric2CharPci, symObjAddr: 0x0, symBinAddr: 0x100003B78, symSize: 0x80 }
+  - { offsetInCU: 0x46, offset: 0x46, size: 0x8, addend: 0x0, symName: __Z12Numeric2CharPci, symObjAddr: 0x0, symBinAddr: 0x100003B78, symSize: 0x80 }
+  - { offsetInCU: 0x98, offset: 0x98, size: 0x8, addend: 0x0, symName: __Z12Char2NumericPKc, symObjAddr: 0x80, symBinAddr: 0x100003BF8, symSize: 0x6C }
+  - { offsetInCU: 0xEE, offset: 0xEE, size: 0x8, addend: 0x0, symName: __Z16secIntegerToCharv, symObjAddr: 0xEC, symBinAddr: 0x100003C64, symSize: 0x98 }
+  - { offsetInCU: 0x124, offset: 0x124, size: 0x8, addend: 0x0, symName: __Z16secCharToIntegerv, symObjAddr: 0x184, symBinAddr: 0x100003CFC, symSize: 0x9C }
+  - { offsetInCU: 0x15A, offset: 0x15A, size: 0x8, addend: 0x0, symName: __Z13getUserChoicev, symObjAddr: 0x220, symBinAddr: 0x100003D98, symSize: 0x58 }
+  - { offsetInCU: 0x186, offset: 0x186, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x278, symBinAddr: 0x100003DF0, symSize: 0x74 }
+...

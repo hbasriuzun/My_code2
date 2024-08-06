@@ -1,18 +1,20 @@
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import SGD, Adam
-from tensorflow.keras.layers import Conv1D, Conv2D, Dense, Dropout, Flatten, MaxPooling2D
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.callbacks import Callback
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras import backend as K
-from tensorflow.keras.initializers import VarianceScaling
-from matplotlib import pyplot as plt
 import numpy as np
 import itertools
-import math as m 
+import math as m
+from keras.models import Sequential
+from keras.optimizers import SGD, Adam
+from keras.layers import Conv1D, Conv2D, Dense, Dropout, Flatten, MaxPooling2D
+from tensorflow.keras.utils import to_categorical
+from keras.callbacks import Callback
+from keras.datasets import mnist
+from keras import backend as K
+from keras.initializers import VarianceScaling
+from matplotlib import pyplot as plt
 
+######################################################################
 # Problem 3 - 2D data
+######################################################################
+
 def archs(classes):
     return [[Dense(input_dim=2, units=classes, activation="softmax")],
             [Dense(input_dim=2, units=10, activation='relu'),
@@ -33,7 +35,6 @@ def get_data_set(name):
     except:
         return None, None, None
     np.random.shuffle(data)  # shuffle the data
-    # The data uses ROW vectors for a data point, that's what Keras assumes.
     _, d = data.shape
     X = data[:, 0:d-1]
     Y = data[:, d-1:d]
@@ -44,6 +45,10 @@ def get_data_set(name):
         y = 0.5 * (y + 1)
     print('Loading X', X.shape, 'y', y.shape, 'classes', set(y))
     return X, y, len(classes)
+
+######################################################################
+# General helpers for Problems 3-5
+######################################################################
 
 class LossHistory(Callback):
     def on_train_begin(self, logs={}):
@@ -78,24 +83,31 @@ def run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs, sp
     N = X_train.shape[0]
     batch = 32 if N > 1000 else 1
     history = LossHistory()
+
     if X_val is None:
-        model.fit(X_train, y_train, epochs=epochs, batch_size=batch, validation_split=split, callbacks=[history], verbose=verbose)
+        model.fit(X_train, y_train, epochs=epochs, batch_size=batch, validation_split=split,
+                  callbacks=[history], verbose=verbose)
     else:
-        model.fit(X_train, y_train, epochs=epochs, batch_size=batch, validation_data=(X_val, y_val), callbacks=[history], verbose=verbose)
+        model.fit(X_train, y_train, epochs=epochs, batch_size=batch, validation_data=(X_val, y_val),
+                  callbacks=[history], verbose=verbose)
+
+    val_acc = None
     if X_val is not None or split > 0:
-        val_acc, val_loss = history.values['epoch_val_acc'][-1], history.values['epoch_val_loss'][-1]
-        print("\nLoss on validation set:" + str(val_loss) + " Accuracy on validation set: " + str(val_acc))
-    else:
-        val_acc = None
+        if 'epoch_val_acc' in history.values and len(history.values['epoch_val_acc']) > 0:
+            val_acc = history.values['epoch_val_acc'][-1]
+        if 'epoch_val_loss' in history.values and len(history.values['epoch_val_loss']) > 0:
+            val_loss = history.values['epoch_val_loss'][-1]
+            print(f"\nLoss on validation set: {val_loss} Accuracy on validation set: {val_acc}")
+        else:
+            print("\nValidation loss/accuracy not recorded")
+    test_acc = None
     if X_test is not None:
         test_loss, test_acc = model.evaluate(X_test, y_test, batch_size=batch)
-        print("\nLoss on test set:" + str(test_loss) + " Accuracy on test set: " + str(test_acc))
-    else:
-        test_acc = None
+        print(f"\nLoss on test set: {test_loss} Accuracy on test set: {test_acc}")
     return model, history, val_acc, test_acc
 
 def dataset_paths(data_name):
-    return ["data/data" + data_name + "_" + suffix + ".csv" for suffix in ("train", "validate", "test")]
+    return [f"data/data{data_name}_{suffix}.csv" for suffix in ("train", "validate", "test")]
 
 def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=True, trials=1):
     print('Keras FC: dataset=', data_name)
@@ -103,22 +115,21 @@ def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=Tr
     X_train, y, num_classes = get_data_set(train_dataset)
     X_val, y2, _ = get_data_set(val_dataset)
     X_test, y3, _ = get_data_set(test_dataset)
-    y_train = to_categorical(y, num_classes)
+    y_train = to_categorical(y, num_classes)  # one-hot
     y_val = y_test = None
     if X_val is not None:
-        y_val = to_categorical(y2, num_classes)
+        y_val = to_categorical(y2, num_classes)  # one-hot
     if X_test is not None:
-        y_test = to_categorical(y3, num_classes)
+        y_test = to_categorical(y3, num_classes)  # one-hot
     val_acc, test_acc = 0, 0
     for trial in range(trials):
-        session = K.get_session()
+        # Katman ağırlıklarını sıfırlama
         for layer in layers:
-            for v in layer.__dict__:
-                v_arg = getattr(layer, v)
-                if hasattr(v_arg, 'initializer'):
-                    initializer_func = getattr(v_arg, 'initializer')
-                    initializer_func.run(session=session)
-        model, history, vacc, tacc = run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs, split=split, verbose=verbose)
+            if hasattr(layer, 'kernel_initializer'):
+                layer.set_weights([layer.kernel_initializer(shape=layer.kernel.shape),
+                                   layer.bias_initializer(shape=layer.bias.shape) if layer.use_bias else None])
+        model, history, vacc, tacc = run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs,
+                                               split=split, verbose=verbose)
         val_acc += vacc if vacc else 0
         test_acc += tacc if tacc else 0
         if display:
@@ -140,10 +151,15 @@ def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=Tr
             plt.title('Epoch val_acc and acc')
             plt.show()
     if val_acc:
-        print("\nAvg. validation accuracy:" + str(val_acc / trials))
+        print("\nAvg. validation accuracy:" + str(val_acc/trials))
     if test_acc:
-        print("\nAvg. test accuracy:" + str(test_acc / trials))
+        print("\nAvg. test accuracy:" + str(test_acc/trials))
     return X_train, y, model
+
+######################################################################
+# Helper functions for 
+# OPTIONAL: Problem 4 - Weight Sharing
+######################################################################
 
 def generate_1d_images(nsamples, image_size, prob):
     Xs = []
@@ -167,7 +183,7 @@ def count_objects_1d(array):
     return count
 
 def l1_reg(weight_matrix):
-    return 0.01 * K.sum(K.abs(weight_matrix))
+    return 0.01 * K.sum(K.abs(weight_matrix))    
 
 def filter_reg(weights):
     lam = 0
@@ -202,6 +218,10 @@ def train_neural_counter(layers, data, loss_func='mse', display=False):
         plt.plot(ws)
         plt.show()
     return model, err
+
+######################################################################
+# Problem 5
+######################################################################
 
 def shifted(X, shift):
     n = X.shape[0]
@@ -244,9 +264,9 @@ def run_keras_fc_mnist(train, test, layers, epochs, split=0.1, verbose=True, tri
         val_acc += vacc if vacc else 0
         test_acc += tacc if tacc else 0
     if val_acc:
-        print("\nAvg. validation accuracy:" + str(val_acc / trials))
+        print("\nAvg. validation accuracy:" + str(val_acc/trials))
     if test_acc:
-        print("\nAvg. test accuracy:" + str(test_acc / trials))
+        print("\nAvg. test accuracy:" + str(test_acc/trials))
 
 def run_keras_cnn_mnist(train, test, layers, epochs, split=0.1, verbose=True, trials=1):
     (X_train, y1), (X_val, y2) = train, test
@@ -269,9 +289,13 @@ def run_keras_cnn_mnist(train, test, layers, epochs, split=0.1, verbose=True, tr
         val_acc += vacc if vacc else 0
         test_acc += tacc if tacc else 0
     if val_acc:
-        print("\nAvg. validation accuracy:" + str(val_acc / trials))
+        print("\nAvg. validation accuracy:" + str(val_acc/trials))
     if test_acc:
-        print("\nAvg. test accuracy:" + str(test_acc / trials))
+        print("\nAvg. test accuracy:" + str(test_acc/trials))
+
+######################################################################
+# Plotting Functions
+######################################################################
 
 def plot_heat(X, y, model, res=200):
     eps = .1
@@ -284,16 +308,20 @@ def plot_heat(X, y, model, res=200):
     yl = np.linspace(ymin, ymax, res)
     xx, yy = np.meshgrid(xl, yl, sparse=False)
     zz = np.argmax(model.predict(np.c_[xx.ravel(), yy.ravel()]), axis=1)
-    im = ax.imshow(np.flipud(zz.reshape((res, res))), interpolation='none', extent=[xmin, xmax, ymin, ymax], cmap='viridis')
+    im = ax.imshow(np.flipud(zz.reshape((res, res))), interpolation='none',
+                   extent=[xmin, xmax, ymin, ymax],
+                   cmap='viridis')
     plt.colorbar(im)
     for yi in set([int(_y) for _y in set(y)]):
         color = ['r', 'g', 'b'][yi]
         marker = ['X', 'o', 'v'][yi]
         cl = np.where(y == yi)
-        ax.scatter(X[cl, 0], X[cl, 1], c=color, marker=marker, s=80, edgecolors='none')
+        ax.scatter(X[cl, 0], X[cl, 1], c=color, marker=marker, s=80,
+                   edgecolors='none')
     return ax
 
-def tidyPlot(xmin, xmax, ymin, ymax, center=False, title=None, xlabel=None, ylabel=None):
+def tidyPlot(xmin, xmax, ymin, ymax, center=False, title=None,
+             xlabel=None, ylabel=None):
     plt.figure(facecolor="white")
     ax = plt.subplot()
     if center:
@@ -327,12 +355,15 @@ def plot_separator(ax, th, th_0):
     pts = []
     eps = 1.0e-6
     if abs(th[1, 0]) > eps:
-        pts += [np.array([x, (-th_0 - x * th[0, 0]) / th[1, 0]]) for x in (xmin, xmax)]
+        pts += [np.array([x, (-th_0 - x * th[0, 0]) / th[1, 0]])
+                for x in (xmin, xmax)]
     if abs(th[0, 0]) > 1.0e-6:
-        pts += [np.array([(-th_0 - y * th[1, 0]) / th[0, 0], y]) for y in (ymin, ymax)]
+        pts += [np.array([(-th_0 - y * th[1, 0]) / th[0, 0], y])
+                for y in (ymin, ymax)]
     in_pts = []
     for p in pts:
-        if (xmin-eps) <= p[0] <= (xmax+eps) and (ymin-eps) <= p[1] <= (ymax+eps):
+        if (xmin-eps) <= p[0] <= (xmax+eps) and \
+           (ymin-eps) <= p[1] <= (ymax+eps):
             duplicate = False
             for p1 in in_pts:
                 if np.max(np.abs(p - p1)) < 1.0e-6:
@@ -343,10 +374,10 @@ def plot_separator(ax, th, th_0):
         vpts = np.vstack(in_pts)
         ax.plot(vpts[:, 0], vpts[:, 1], 'k-', lw=2)
         vmid = 0.5 * (in_pts[0] + in_pts[1])
-        scale = np.sum(th * th) ** 0.5
+        scale = np.sum(th * th)**0.5
         diff = in_pts[0] - in_pts[1]
-        dist = max(xmax - xmin, ymax - ymin)
-        vnrm = vmid + (dist / 10) * (th.T[0] / scale)
+        dist = max(xmax-xmin, ymax-ymin)
+        vnrm = vmid + (dist/10) * (th.T[0]/scale)
         vpts = np.vstack([vmid, vnrm])
         ax.plot(vpts[:, 0], vpts[:, 1], 'k-', lw=2)
         ax.set_xlim((xmin, xmax))
@@ -367,3 +398,5 @@ def plot_decision(data, cl, diff=False):
         for i in range(cl):
             plot_separator(ax, W[:, i:i+1], W0[i:i+1, :])
     plt.show()
+
+

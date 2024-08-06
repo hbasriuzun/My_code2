@@ -1,4 +1,0 @@
-tensorflow-macos==2.13.0
-keras==2.13.1
-tensorboard==2.13.0
-typing-extensions==4.5.0
