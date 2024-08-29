@@ -2,13 +2,27 @@
 #include <cstdlib> // srand, rand için gerekli
 #include <ctime>   // time için gerekli
 #include <vector>
+#include <algorithm> // std::swap için gerekli
+
+// Bubble Sort algoritmasını tanımla
+void bubbleSort(std::vector<std::pair<int, int>>& vec) {
+    int n = vec.size();
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (vec[j].second < vec[j + 1].second) {
+                // Değerleri takas et
+                std::swap(vec[j], vec[j + 1]);
+            }
+        }
+    }
+}
 
 int main() {
     srand(time(0)); // Rastgele sayı üreteciyi saati temel alarak başlat
 
-    int numTrials = 1000; // Deneme sayısı
+    int numTrials = 10000000; // Deneme sayısı
     double initialBet = 10.0; // İlk bahis miktarı
-    double totalMoney = 1000.0; // Başlangıçtaki toplam para
+    double totalMoney = 1000000.0; // Başlangıçtaki toplam para
     int maxRounds = 100; // Bir oyunda maksimum tur sayısı
 
     std::vector<int> roundsToBankruptcy(maxRounds + 1, 0); // Her turda kaç kez iflas edildiğini tutar
@@ -23,7 +37,6 @@ int main() {
 
             if (won) {
                 money += currentBet;
-                break; // Kazandıysak döngüden çık
             } else {
                 money -= currentBet;
                 currentBet *= 2; // Bahsi ikiye katla
@@ -38,12 +51,20 @@ int main() {
         }
     }
 
-    // Sonuçları yazdırma
-    std::cout << "Hangi raundda kac kere tum parayi kaybettiginin ozeti:" << std::endl;
+    // Bubble Sort ile iflas sayılarını büyükten küçüğe sırala
+    std::vector<std::pair<int, int>> roundBankruptcy;
     for (int i = 0; i <= maxRounds; ++i) {
         if (roundsToBankruptcy[i] > 0) {
-            std::cout << i << ". raundda: " << roundsToBankruptcy[i] << " kere iflas" << std::endl;
+            roundBankruptcy.emplace_back(i, roundsToBankruptcy[i]);
         }
+    }
+
+    bubbleSort(roundBankruptcy);
+
+    // Sonuçları yazdırma
+    std::cout << "Hangi raundda kac kere iflas ettiginin ozeti (büyükten küçüğe sıralı):" << std::endl;
+    for (const auto& entry : roundBankruptcy) {
+        std::cout << entry.first << ". raundda: " << entry.second << " kere iflas" << std::endl;
     }
 
     return 0;
