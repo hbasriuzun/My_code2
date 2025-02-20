@@ -10,9 +10,9 @@ int main() {
     cin >> n >> k;
     deque<int> deq;
     
-    for(int i=0; i<n; i++){
+    for(int i=1; i<=n; i++){
         cin >> a[i];
-        deq.push_back(a[i]);
+        deq.push_front(a[i]);
         sum+=a[i];
         
         while(sum > k){
